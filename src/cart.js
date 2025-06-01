@@ -1,31 +1,10 @@
-/*
-Din uppgift:
-- skriv testfall för alla funktionerna nedan i cart.test.js (RED)
-- skriv kod här för att implementera funktionerna (GREEN)
-
-Tips:
-- börja med att identifiera VAD som ska testas.
-- om du testar t.ex. removeFromCart får du använda addToCart i början av testet. Den kommer nämligen ha sina egna tester
-
-*/
-// function getCartItemCount()
-// function getItem(index)
-// function getTotalCartValue()
-// function addToCart(newItem)
-// function removeFromCart(itemId)
-// function editCart(itemId, newValues)
-// function clearCart()
-// -------------------------------------------------- //
-
 import { isCartItem, isProduct } from "./validation.js"
 
-const cart = [
+export const cart = [
   { id: 1, name: 'Toy Car' },
   { id: 2, name: 'Water Gun' }
 ]
 let idCounter = 2002
-// -------------------------------------------------- //
-
 
 // Din kod börjar här
 // Du får en funktion att börja med
@@ -33,7 +12,6 @@ function addToCart(newItem) {
 	if( !isProduct(newItem) ) {
 		return false
 	}
-
 	const newId = idCounter
 	const index = cart.findIndex(ci => ci.item.id === newItem.id)
 	if( index === -1 ) {
@@ -80,7 +58,6 @@ function getTotalCartValue(cart) {
       continue
     }
   }
- 
   return total
  }
 }
@@ -146,8 +123,4 @@ function clearCart() {
   return "Cart cleared"
 }
 
-
 export { getCartItemCount, getItem, getTotalCartValue,addToCart, removeFromCart , editCart ,clearCart}
-
-
-
