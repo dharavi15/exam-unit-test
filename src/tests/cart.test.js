@@ -1,4 +1,3 @@
-//  Import all cart functions from the cart module
 import {
   getCartItemCount,
   getItem,
@@ -10,157 +9,137 @@ import {
   cart
 } from "../cart"
 
-// Test suite for cart functions
-const cartProducts = [
-      { id: 2001, amount: 1 , price: 100},
-      { id: 2002, amount: 2 ,  price: 50}
-    ]
-
-describe('Cart basic add-to-cart test', () => {
+describe("Cart Functionality", () => {
   beforeEach(() => {
-    // Clear cart before each test
     clearCart()
   })
-//Test for addToCart
-  test('addToCart lägger till en ny produkt i kundvagnen', () => {
-    //Arrange
-    const itemCountBefore = getCartItemCount()
-    const input =[ { id: 1111, name: 'Test Item', price: 20 }]
-    //Act
-    const itemCountAfter = getCartItemCount(input)
-    //Assert
-    expect(itemCountAfter).toBe(itemCountBefore + 1)
-  })
-})
 
-//Test for getCartItem
- test('returns correct count for a cart with multiple items', () => {
-   //Arrange
-   const input =[ { id: 1111, name: 'Test Item', price: 20 },
-    { id: 1112, name: 'Test Item2', price: 50 } ]
-    //Act
-    const result = getCartItemCount(input)
-    //Assert
-    expect(result).toBe(2) // We added 2 products in beforeEach
-  })
-
- //getItem test cases
-test('returns the correct item for index 0', () => {
-  //Arrange
-const product = { id: 1002, name: 'Vattenpistol', price: 40 }
+  // -----------------------------------
+  //  addToCart
+  // -----------------------------------
+  test("adds a valid product to the cart", () => {
+    const product = { id: 1111, name: "Ball", price: 30 }
     addToCart(product)
-  //Act
-  const result = getItem(0)
-  //Assert
-  expect(result).toStrictEqual({
-    id: expect.any(Number),
-    amount: 1,
-    item: product
+    expect(getCartItemCount(cart)).toBe(1)
   })
-})
 
-  test('returns the correct item for index 1', () => {
-    // Arrange
-    const item1 = { id: 1002, name: 'Vattenpistol', price: 40 }
-    const item2 = { id: 1003, name: 'Water Gun', price: 60 }
-    addToCart(item1)
-    addToCart(item2)
-    // Act
-    const result = getItem(1)
-    // Assert
+  test("throws error when product is null", () => {
+    expect(() => addToCart(null)).toThrow("Invalid product")
+  })
+
+  test("throws error when product is missing price", () => {
+    const invalidProduct = { id: 100, name: "Toy" }
+    expect(() => addToCart(invalidProduct)).toThrow("Invalid product")
+  })
+
+  // -----------------------------------
+  //  getCartItemCount
+  // -----------------------------------
+  test("returns 0 if input is not an array", () => {
+    expect(getCartItemCount("not-an-array")).toBe(0)
+  })
+
+  test("returns correct count for valid array", () => {
+    const input = [
+      { id: 1, price: 20, amount: 1 },
+      { id: 2, price: 10, amount: 2 }
+    ]
+    expect(getCartItemCount(input)).toBe(2)
+  })
+
+  // -----------------------------------
+  // getItem
+  // -----------------------------------
+  test("returns item at index 0", () => {
+    const product = { id: 2001, name: "Duck", price: 10 }
+    addToCart(product)
+    const result = getItem(0)
     expect(result).toStrictEqual({
       id: expect.any(Number),
       amount: 1,
-      item: item2
+      item: product
     })
   })
 
-// getTotalCartValue test cases
-  test('returns 0 for empty cart', () => {
-	//Arrange
-  const cart = []
-	//Act
-  const result = getTotalCartValue(cart)
-  //Assert
-	expect(result).toBe(0)
+  test("returns undefined for invalid index", () => {
+    const result = getItem(999)
+    expect(result).toBeUndefined()
   })
 
-  test('returns 0 if cart is not an array', () => {
-	//Arrange
-  const cart = "not an array"
-	//Act
-  const result = getTotalCartValue(cart)
-  //Assert
-	expect(result).toBe(0)
+  // -----------------------------------
+  // getTotalCartValue
+  // -----------------------------------
+  test("returns 0 for empty cart", () => {
+    expect(getTotalCartValue([])).toBe(0)
   })
 
-  test('returns 0 if cart is number', () => {
-	//Arrange
-  const cart = 123
-	//Act
-  const result = getTotalCartValue(cart)
-  //Assert
-  expect(result).toBe(0)
+  test("returns 0 if input is not an array", () => {
+    expect(getTotalCartValue("invalid")).toBe(0)
   })
 
-   test('returns total for valid cart items', () => {
-	//Arrange
-    const cart = cartProducts
-	//Act
-    const result = getTotalCartValue(cart)
-  //Assert
-	expect(result).toBe(200)
+  test("returns correct total value for valid cart", () => {
+    const testCart = [
+      { price: 50, amount: 1 },
+      { price: 25, amount: 2 }
+    ]
+    expect(getTotalCartValue(testCart)).toBe(100)
   })
 
-//test cases for removeFromCart
-   test('returns Invalid item ID if id is passed as a string', () => {
-	  //Arrange
-    const id = "1"
-	  //Act
-    const result = removeFromCart(id)
-    //Assert
-    expect(result).toStrictEqual("Invalid item ID")
-  })
-  
-
-  test('returns Item not found in cart if invalid id is passed', () => {
-	//Arrange
-   const id = 100
-	//Act
-    const result = removeFromCart(id)
-  //Assert
-	expect(result).toStrictEqual("Item not found in cart")
-  })
-  
-  //test cases of editCart
-   test('returns Invalid item ID message when invalid itemId is passed', () => {
-	//Arrange
-    const itemId = "1"
-    const newValues = { price: 122 }
-	//Act
-    const result = editCart(itemId,newValues)
-  //Assert  
-	expect(result).toStrictEqual("Invalid item ID")
+  // -----------------------------------
+  // removeFromCart
+  // -----------------------------------
+  test("throws error if item ID is not a number (removeFromCart)", () => {
+    expect(() => removeFromCart("abc")).toThrow("Invalid item ID")
   })
 
-  //Empty itemId is passed
-  test('returns Invalid item ID message when itemId is missing', () => {
-  // Arrange
-  const itemId = "eat"
-  const newValues = { price: 100 }
+  test("throws error if item is not found (removeFromCart)", () => {
+    expect(() => removeFromCart(9999)).toThrow("Item not found in cart")
+  })
 
-  // Act
-  const result = editCart(itemId, newValues)
-
-  // Assert
-  expect(result).toBe("Invalid item ID")
-})
-
-test('empties the cart and returns confirmation message', () => {
-    // Act
-    const result = clearCart()
-
-    // Assert
+  test("removes item if valid ID is provided", () => {
+    const product = { id: 3000, name: "Frisbee", price: 15 }
+    addToCart(product)
+    const cartItem = cart.find(ci => ci.item.id === 3000)
+    const result = removeFromCart(cartItem.id)
+    expect(result).toBe("Item removed from cart")
     expect(cart.length).toBe(0)
-    expect(result).toBe("Cart cleared")
   })
+
+  // -----------------------------------
+  // editCart
+  // -----------------------------------
+  test("throws error if item ID is not a number (editCart)", () => {
+    expect(() => editCart("xyz", { name: "NewName" })).toThrow("Invalid item ID")
+  })
+
+  test("throws error if item is not found (editCart)", () => {
+    expect(() => editCart(8888, { name: "Ghost" })).toThrow("Item not found in cart")
+  })
+
+  test("throws error if name is not a string (editCart)", () => {
+    const product = { id: 4001, name: "Car", price: 50 }
+    addToCart(product)
+    const cartItem = cart.find(ci => ci.item.id === 4001)
+    expect(() => editCart(cartItem.id, { name: 123 })).toThrow("Invalid name")
+  })
+
+  test("updates item name successfully (editCart)", () => {
+    const product = { id: 4002, name: "Boat", price: 45 }
+    addToCart(product)
+    const cartItem = cart.find(ci => ci.item.id === 4002)
+    const result = editCart(cartItem.id, { name: "Ship" })
+    expect(result).toBe("Item updated successfully")
+    expect(cartItem.name).toBe("Ship")
+  })
+
+  // -----------------------------------
+  // clearCart
+  // -----------------------------------
+  test("empties the cart and returns confirmation message", () => {
+    const product = { id: 5000, name: "Plane", price: 60 }
+    addToCart(product)
+    const result = clearCart()
+    expect(result).toBe("Cart cleared")
+    expect(cart.length).toBe(0)
+  })
+})
